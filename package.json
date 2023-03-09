@@ -1,5 +1,5 @@
 {
-  "name": "watch-cli",
+  "name": "flixy-cli",
   "version": "1.0.0",
   "description": "A simple CLI Tool to watch a movie or TV Show",
   "main": "./bin/index.js",
@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "flixy": "./bin/index.js"
+    "flixy-cli": "./bin/index.js"
   },
   "author": "Mica",
   "license": "ISC",

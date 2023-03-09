@@ -1,0 +1,35 @@
+{
+  "name": "watch-cli",
+  "version": "1.0.0",
+  "description": "A simple CLI Tool to watch a movie or TV Show",
+  "main": "./bin/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "flixy": "./bin/index.js"
+  },
+  "author": "Mica",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "clear": "^0.1.0",
+    "cli-progress": "^3.12.0",
+    "commander": "^10.0.0",
+    "conf": "^11.0.1",
+    "figlet": "^1.5.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "inquirer": "^8.2.5",
+    "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.5.5",
+    "@types/inquirer": "^9.0.3",
+    "@types/node": "^18.14.6",
+    "@types/node-fetch": "^2.6.2",
+    "nodemon": "^2.0.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  }
+}

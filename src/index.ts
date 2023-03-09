@@ -6,6 +6,7 @@ const clear = require('clear');
 const exec = require('child_process').exec;
 const cliProgress = require('cli-progress');
 const ffmpeg = require('fluent-ffmpeg');
+const chalk = require('chalk');
 
 clear();
 
@@ -176,7 +177,7 @@ class Flixy {
         this.playback(selectedSource.url, referer, filename);
     }
 
-    private async playback(url: string, referer: string, filename: string | undefined) {
+    private async playback(url: string, referer: string, filename?: string) {
         if (this.options.download && filename !== undefined) {
             return this.downloadStream(url, filename);
         }
@@ -222,16 +223,14 @@ class Flixy {
     }
 
     private downloadStream(url: string, filename: string) {
-        const downloadBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-
-        console.log('Download:', filename);
-        console.log('URL:', url);
+        console.log(' ');
+        const downloadBar = new cliProgress.SingleBar({
+            format: 'Downloading: |' + chalk.green('{bar}') + '| {percentage}% || {value}/{total} Chunks',
+            hideCursor: true
+        }, cliProgress.Presets.shades_classic);
 
         ffmpeg()
             .input(url)
-            .inputOptions([
-                `-headers "Referer: ${this.watchData.headers.Referer}"`,
-            ])
             .outputOptions([
                 '-bsf:a aac_adtstoasc',
                 '-vcodec copy',
@@ -242,31 +241,32 @@ class Flixy {
                 downloadBar.start(100, 0);
             })
             .on('progress', (progress: any) => {
-                downloadBar.update(progress.percent.toFixed(2));
+                downloadBar.update(Math.floor(progress.percent));
             })
             .on('error', (err: any, stdout: any, stderr: any) => {
                 console.error('Cannot process video: ' + err.message);
             })
             .on('end', () => {
-                console.log('\nProcessing finished !');
+                console.log(`\nDownload finished!', ${process.env.PWD}/${filename}.mp4`);
                 downloadBar.stop();
+                process.exit();
             })
             .save(`${filename}.mp4`);
 
-        process.exit();
     }   
 }
 
 
 (async () => {
     try {
-        console.log(figlet.textSync("Flixy CLI", { horizontalLayout: 'full' }));
+        console.log(chalk.red(figlet.textSync(`Flixy CLI`, { horizontalLayout: 'full' })));
         console.log(" ");
-
+        console.log("_________________________________________________________________________________________");
+        console.log(" ");
         const cliData = { query: '', options: [] };
 
         program
-            .version('1.0.0')
+            .version('1.0.1')
             .description('Simple CLI tool to lookup a TV show or Movie and stream it.')
             .argument('<string>', 'Movie/TV-Show Title to search for.')
             .option('-d, --download', 'Download the media to a file.')

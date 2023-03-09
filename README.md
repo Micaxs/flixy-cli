@@ -10,6 +10,7 @@ Watch Movies and TV Shows directly from a terminal.
 
 ## Installation
 ```
+npm install
 npm run build
 sudo npm i -g .
 ```

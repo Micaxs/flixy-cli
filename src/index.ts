@@ -184,7 +184,7 @@ class Flixy {
 
         try {
             console.log(' ');
-            console.log(`### Starting playback ###`);
+            console.log(chalk.blue(`> 🎞 Streaming ${filename ? filename : 'Media'}...`));
             exec(`mpv ${url} --cache=yes --http-header-fields=Referer: ${referer}`);
         } catch (e) {
             console.error(e);
@@ -225,7 +225,7 @@ class Flixy {
     private downloadStream(url: string, filename: string) {
         console.log(' ');
         const downloadBar = new cliProgress.SingleBar({
-            format: 'Downloading: |' + chalk.green('{bar}') + '| {percentage}% || {value}/{total} Chunks',
+            format: chalk.blue('📥 Downloading:') + ' | ' + chalk.green('{bar}') + ' | {percentage}% | {value}/{total} Chunks',
             hideCursor: true
         }, cliProgress.Presets.shades_classic);
 
@@ -261,24 +261,35 @@ class Flixy {
     try {
         console.log(chalk.red(figlet.textSync(`Flixy CLI`, { horizontalLayout: 'full' })));
         console.log(" ");
-        console.log("_________________________________________________________________________________________");
+        console.log("_____________________________________________________________________");
         console.log(" ");
         const cliData = { query: '', options: [] };
 
         program
-            .version('1.0.1')
+            .version('1.0.2')
             .description('Simple CLI tool to lookup a TV show or Movie and stream it.')
-            .argument('<string>', 'Movie/TV-Show Title to search for.')
             .option('-d, --download', 'Download the media to a file.')
-            .action((str: string, options: any) => {
-                cliData.query = str,
-                    cliData.options = options
+            .argument('[string...]', 'Movie/TV-Show Title to search for.')
+            .action(() => {
+                cliData.query = program.args?.join(' ');
+                cliData.options = program.opts();
             })
             .parse(process.argv);
 
-        const flixy = new Flixy(cliData.query, cliData.options);
-        await flixy.lookup({ query: cliData.query })
-
+        if (cliData.query === '') {
+            console.log(chalk.yellow('Note: This is a pure alpha-state tool, things will/might break!'));
+            console.log("_____________________________________________________________________");
+            console.log(" ");
+            await inquirer.prompt([{ message: 'Search:', name: 'query' }])
+                .then(async (answer: any) => {
+                    cliData.query = answer.query;
+                    const flixy = new Flixy(cliData.query, cliData.options);
+                    await flixy.lookup({ query: cliData.query });
+                });
+        } else {
+            const flixy = new Flixy(cliData.query, cliData.options);
+            await flixy.lookup({ query: cliData.query });
+        }
     } catch (e) {
         throw e;
     }

@@ -1,6 +1,6 @@
 {
   "name": "flixy-cli",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A simple CLI Tool to watch a movie or TV Show",
   "main": "./bin/index.js",
   "scripts": {
